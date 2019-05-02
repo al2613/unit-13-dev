@@ -1,0 +1,28 @@
+version: '3'
+services:
+  test:
+    image: facompany/mm-dev 
+    container_name: 'mm-test'
+    ports:
+      - 3000:3000
+    volumes:
+      # setting link from host machine to a container's usr/src/app directory
+      - ./:/usr/src/app
+      # connecting container's node modules to our machine as node modules on our local machine does not exist
+      - node_modules:/usr/src/app/node_modules
+    depends_on:
+      - postgres-db-test
+    # runs from local machine 
+    command: npm run test
+  postgres-db-test:
+    image: facompany/mm-postgres
+    container_name: mm-test-database
+    environment:
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=mmadmin
+      - POSTGRES_DB=mmdb
+    volumes:
+      - test-db-volume:/var/lib/postgresql/data 
+volumes:
+  node_modules:
+  test-db-volume:

@@ -17,10 +17,8 @@ import store from './store';
 import './styles.css';
 
 render(
-    <Provider store={store}>
-      <App/>
-    </Provider>,
-    document.getElementById('contents')
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('contents')
 );
-
-
