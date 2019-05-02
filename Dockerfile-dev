@@ -1,0 +1,14 @@
+#Start with a base image of node:10.15
+FROM node:10.15
+
+RUN npm install webpack -g
+
+WORKDIR /usr/src/app
+
+#Copy is used to copy files from docker host file system into the container
+#Arg 1 is what we are copying arg 2 is where in the container we are copying it to 
+COPY package*.json /usr/src/app/
+
+RUN npm install
+
+# EXPOSE 3000

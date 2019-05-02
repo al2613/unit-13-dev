@@ -1,0 +1,42 @@
+#we could get the benefits of live reloading/HMR by running webpack-dev-server in a development container
+
+#dependencies across our production and development containers will stay in sync because we'll npm install from the same package.json
+
+#version specifies the versioning of docker. This specifies what features are available and how to structure your compose file
+version: '3'
+
+#services define pieces of the application that are being containerized
+services:
+  dev:
+    #starting image for this service
+    image: facompany/mm-dev
+    #create container name
+    container_name: mm-dev-hot
+    #expose ports (HOST: CONTAINER)
+    ports:
+      - 8080:8080
+    #volumes are Docker’s mechanism for sharing and persisting data beyond the life of a container.
+    volumes:
+      # setting link from host machine to a container's usr/src/app directory
+      #mounting our current directory here (which does not include the files in node_modules), overwrites the node_modules from our mm-dev image (that we populated in the image by running npm install) with an empty directory in our container
+      - ./:/usr/src/app
+      #using a named volume rather than path volume so docker handles where it will be stored. This is needed because there is no directory called "node_modules" in our host file system. To preserve our node modules, we'll mount a named volume
+      - node_modules:/usr/src/app/node_modules
+    #this indicates we don't want our dev service to start until our postgres-db service starts
+    depends_on:
+      - postgres-db
+    # runs from local machine
+    command: npm run dev:hot
+  #creating a service called postgres-db for our db
+  postgres-db:
+    image: facompany/mm-postgres
+    container_name: mm-database
+    environment:
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=mmadmin
+      - POSTGRES_DB=mmdb
+    volumes:
+      - dev-db-volume:/var/lib/postgresql/data
+volumes:
+  dev-db-volume:
+  node_modules:

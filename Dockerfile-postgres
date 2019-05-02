@@ -1,0 +1,5 @@
+#start with a base image of postgres 9.6.8
+FROM postgres:9.6.8
+
+#copy our db_init.sql script into docker-entrypoint-init.d directory so that when the DB is spun up it auto runs that script to populate our test DB
+COPY ./scripts/db_init.sql /docker-entrypoint-initdb.d/
